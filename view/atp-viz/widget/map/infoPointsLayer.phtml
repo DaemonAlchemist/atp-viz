@@ -91,8 +91,9 @@ var <?=$name?>LayerUpdate = function(){
 			<?=$name?>FeatureLayer = new esri.layers.FeatureLayer(<?=$name?>FeatureCollection, <?=$name?>Options);
 
 			<?php if($showVisibilityToggle) { ?>
-				addVisibilityToggle(<?=$name?>FeatureLayer, '<?=$name?>', '<?=$label?>');
+				addVisibilityToggle(<?=$name?>FeatureLayer, '<?=$name?>', '<?=$label?>', <?=$visible ? 'true' : 'false'?>);
 			<?php } ?>
+			<?=$name?>FeatureLayer.setVisibility(<?=$visible ? 'true' : 'false'?>);
 			
 			map.addLayer(<?=$name?>FeatureLayer);
 			

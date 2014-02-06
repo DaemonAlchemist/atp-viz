@@ -40,8 +40,9 @@ var <?=$name?>AddLayer = function(){
 	<?php } ?>
 
 	<?php if($showVisibilityToggle) { ?>
-		addVisibilityToggle(<?=$name?>Layer, '<?=$name?>', '<?=$label?>');
+		addVisibilityToggle(<?=$name?>Layer, '<?=$name?>', '<?=$label?>', <?=$visible ? 'true' : 'false'?>);
 	<?php } ?>
+	<?=$name?>Layer.setVisibility(<?=$visible ? 'true' : 'false'?>);
 	
 	map.addLayer(<?=$name?>Layer);
 };

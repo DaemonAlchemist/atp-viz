@@ -13,13 +13,15 @@
 			basemap: '<?=$baseMap?>'
 		});
 		
-		var addVisibilityToggle = function(layer, layerId, layerLabel){
+		var addVisibilityToggle = function(layer, layerId, layerLabel, isVisible){
 			var inputId = layerId + "VisibilityToggle";
 			
 			//Create the checkbox if it doesn't exist
 			if($("#" + inputId).length == 0) {
 				var html = "<li>";
-				html += "<input type=\"checkbox\" id=\"" + inputId + "\" checked />";
+				html += "<input type=\"checkbox\" id=\"" + inputId + "\"";
+				if(isVisible) html += " checked";
+				html += "/>";
 				html +=	"<label>" + layerLabel + "</label>";
 				html += "</li>";
 				$("div#<?=$name?> ul.visibility-toggles").append(html);

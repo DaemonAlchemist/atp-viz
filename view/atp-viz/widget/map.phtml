@@ -1,0 +1,69 @@
+<script type="text/javascript">
+	dojo.require("esri.map");
+	dojo.require("esri/dijit/HomeButton");
+	dojo.require("esri/dijit/BasemapToggle");
+	<?php foreach($requires as $req) { ?>
+		dojo.require('<?=$req?>');
+	<?php } ?>
+
+	dojo.addOnLoad(function(){
+		var map = new esri.Map("<?=$id?>",{
+			center: [<?=$center['x']?>, <?=$center['y']?>],
+			zoom: <?=$zoom?>,
+			basemap: '<?=$baseMap?>'
+		});
+		
+		var addVisibilityToggle = function(layer, layerId, layerLabel){
+			var inputId = layerId + "VisibilityToggle";
+			
+			//Create the checkbox if it doesn't exist
+			if($("#" + inputId).length == 0) {
+				var html = "<li>";
+				html += "<input type=\"checkbox\" id=\"" + inputId + "\" checked />";
+				html +=	"<label>" + layerLabel + "</label>";
+				html += "</li>";
+				$("div#<?=$name?> ul.visibility-toggles").append(html);
+				$("div#<?=$name?> div.legend div.accordion").accordion("refresh");
+			}
+			
+			//Unbind click event in case we are re-creating the layer
+			$("#" + inputId).unbind('click');
+			
+			//Toggle layer visibility when checkbox clicked
+			$("#" + inputId).click(function(){
+				layer.setVisibility(this.checked);
+			});
+		};
+		
+		<?=$layers?>
+		
+		<?php if(!empty($altBaseMap)) { ?>
+			var toggle = new esri.dijit.BasemapToggle({map: map, basemap: "<?=$altBaseMap?>"}, "basemap-toggle");
+			toggle.startup();
+		<?php } ?>
+		
+		<?php if($showHomeButton) { ?>
+			var home = new esri.dijit.HomeButton({map: map}, "home-button");
+			home.startup();
+		<?php } ?>
+	});
+</script>
+
+<div id="<?=$name?>" class="widget map-widget ui-widget ui-corner-all border-box">
+	<h2 class="ui-widget-header ui-corner-all"><?=$title?></h2>
+	<div class="ui-widget-content">
+		<div class="legend">
+			<div class="accordion">
+				<h3>Show Layers</h3>
+				<div>
+					<ul class="visibility-toggles">
+					</ul>
+				</div>
+			</div>
+		</div>
+		<div id="<?=$id?>" class="map" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region: 'center'">
+			<div id="home-button"></div>
+			<div id="basemap-toggle"></div>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,48 @@
+var <?=$name?>Options = <?=$layerOptions?>;
+
+<?php if(isset($infoWindowFields) && count($infoWindowFields) > 0) { ?>
+	var <?=$name?>InfoTemplate = new esri.InfoTemplate({
+		content: "\
+			<div id=\"<?=$name?>-info-template\">\
+				<h2><?=$infoWindowTitle?></h2>\
+				<table>\
+					<?php foreach($infoWindowFields as $field) { ?>\
+						<tr>\
+							<td><?=$field?></td>\
+							<td>${<?=$field?>}</td>\
+						</tr>\
+					<?php } ?>\
+				</table>\
+			</div>\
+		"
+	});
+	<?=$name?>Options.infoTemplate = <?=$name?>InfoTemplate;
+<?php } ?>
+
+var <?=$name?>Layer;
+
+<?php if(isset($extra)) { ?>
+	<?=$extra?>
+<?php } ?>
+
+var <?=$name?>AddLayer = function(){
+	<?=$name?>Layer = new <?=$class?>(
+		"<?=$endpoint?>",
+		<?=$name?>Options
+	);
+
+	<?php if($hasQuery) { ?>
+		<?=$name?>Layer.setDefinitionExpression(<?=$query['function']?>());
+	<?php } ?>
+
+	<?php if(isset($minScale)) { ?>
+		<?=$name?>Layer.setMinScale(<?=$minScale?>);
+	<?php } ?>
+
+	<?php if($showVisibilityToggle) { ?>
+		addVisibilityToggle(<?=$name?>Layer, '<?=$name?>', '<?=$label?>');
+	<?php } ?>
+	
+	map.addLayer(<?=$name?>Layer);
+};
+<?=$name?>AddLayer();

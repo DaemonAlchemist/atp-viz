@@ -1,0 +1,10 @@
+<div id="<?=$name?>" class="widget ui-widget ui-corner-all border-box">
+	<h2 class="ui-widget-header ui-corner-all"><?=$title?></h2>
+	<div class="ui-widget-content">
+		<table class="data-list">
+			<?php foreach($data as $name => $value) { ?>
+				<tr><td><?=$name?></td><td><?=$value?></td></tr>
+			<?php } ?>
+		</table>
+	</div>
+</div>

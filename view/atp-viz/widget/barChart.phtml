@@ -1,0 +1,23 @@
+<script type="text/javascript">
+	google.load("visualization", "1", {packages: ["corechart"]});
+	google.setOnLoadCallback(drawChart);
+	function drawChart() {
+		var data = google.visualization.arrayToDataTable([
+			[<?=\ATP\MapReduce::wrapJoin($data['columns'], ",", "'")?>]
+			<?php foreach($data['data'] as $x => $vals) { ?>
+				,['<?=$x?>', <?=\ATP\MapReduce::wrapJoin($vals, ",")?>]
+			<?php } ?>
+		]);
+		
+		var options = <?=$chartOptions?>;
+		
+		var chart = new google.visualization.BarChart(document.getElementById('<?=$id?>'));
+		chart.draw(data, options);
+	};
+</script>
+<div id="<?=$name?>" class="widget ui-widget ui-corner-all border-box">
+	<h2 class="ui-widget-header ui-corner-all"><?=$title?></h2>
+	<div class="ui-widget-content">
+		<div id="<?=$id?>" class="chart"></div>
+	</div>
+</div>

@@ -1,0 +1,105 @@
+var <?=$name?>FeatureCollection = {
+	featureSet: {
+		features: [],
+		geometryType: "esriGeometryPoint"
+	},
+	layerDefinition: {
+		geometryType: "esriGeometryPoint",
+		objectIdField: "<?=$idField?>",
+		type: "Feature Layer",
+		typeIdField: "",
+		drawingInfo: {
+			renderer: {
+				type: "simple",
+				symbol: {
+					type: "esriPMS",
+					url: "<?=$symbol?>",
+					contentType: "image/png",
+					width: <?=$symbolSize?>,
+					height: <?=$symbolSize?>
+				}
+			}
+		},
+		fields: [
+			{
+				name: "<?=$idField?>",
+				alias: "<?=$idField?>",
+				type: "esriFieldTypeOID",
+				editable: false,
+				domain: null
+			}
+			<?php foreach($fieldDefinitions as $varName => $type) { ?>
+				,{
+					name: "<?=$varName?>",
+					alias: "<?=$varName?>",
+					type: "esriFieldType<?=$type?>",
+					editable: false,
+					domain: null
+				}
+			<?php } ?>
+		],
+		types: [],
+		capabilities: "Query"
+	}
+};
+
+var <?=$name?>InfoTemplate = new esri.InfoTemplate({
+	content: "\
+		<div id=\"<?=$name?>-info-template\">\
+			<h2><?=$infoWindowTitle?></h2>\
+			<table>\
+				<tr>\
+					<td><?=$idField?></td>\
+					<td>${<?=$idField?>}</td>\
+				</tr>\
+				<?php foreach($fieldDefinitions as $varName => $type) { ?>\
+					<tr>\
+						<td><?=$varName?></td>\
+						<td>${<?=$varName?>}</td>\
+					</tr>\
+				<?php } ?>\
+			</table>\
+		</div>\
+	"
+});
+
+var <?=$name?>FeatureLayer = null;
+
+var <?=$name?>LayerUpdate = function(){
+	$.ajax({
+		url: '<?=$this->basePath()?>/dashboard/dataSource/get-data?dataSource=<?=$dataSource?>',
+		success: function(data) {
+			if(<?=$name?>FeatureLayer) map.removeLayer(<?=$name?>FeatureLayer);
+			<?=$name?>FeatureCollection.featureSet.features = [];
+			
+			var <?=$name?>Data = $.parseJSON(data);
+
+			<?=$name?>Data.data.forEach(function(item){
+				var lat = parseFloat(item.<?=$coordinateFields[0]?>);
+				var lon = parseFloat(item.<?=$coordinateFields[1]?>);
+				var geometry = esri.geometry.geographicToWebMercator(new esri.geometry.Point(lon, lat));
+				var feature = {
+					geometry: geometry.toJson(),
+					attributes: item
+				};
+				<?=$name?>FeatureCollection.featureSet.features.push(feature);
+			});
+
+			var <?=$name?>Options = <?=$layerOptions?>;
+			<?=$name?>Options.infoTemplate = <?=$name?>InfoTemplate;
+			<?=$name?>Options.id = "<?=$name?>";
+			<?=$name?>FeatureLayer = new esri.layers.FeatureLayer(<?=$name?>FeatureCollection, <?=$name?>Options);
+
+			<?php if($showVisibilityToggle) { ?>
+				addVisibilityToggle(<?=$name?>FeatureLayer, '<?=$name?>', '<?=$label?>');
+			<?php } ?>
+			
+			map.addLayer(<?=$name?>FeatureLayer);
+			
+			<?php if(!empty($refreshInterval)) { ?>
+				setTimeout(<?=$name?>LayerUpdate, <?=$refreshInterval * 60000?>);
+			<?php } ?>
+		}
+	});
+};
+<?=$name?>LayerUpdate();

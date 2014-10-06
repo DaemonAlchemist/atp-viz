@@ -33,6 +33,9 @@ class AbstractWidget extends \Zend\View\Model\ViewModel
 	{
 		parent::setOptions($options);
 		
+		//Make sure the view model is available in the view
+		$this->widget = $this;
+		
 		foreach($options as $name => $value)
 		{
 			$this->$name = $value;

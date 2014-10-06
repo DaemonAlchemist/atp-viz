@@ -11,6 +11,24 @@ class DataTable extends \ATPViz\Widget\AbstractWidget
 		$this->setTemplate('atp-viz/widget/dataTable.phtml');
 	}
 
+	public function getClasses($row)
+	{
+		$classes = array();
+		if(isset($this->classFields))
+		{
+			foreach($this->classFields as $field)
+			{
+				$value = $row[$field];
+				$method = "get{$field}Class";
+				if(method_exists($this, $method)) $value = $this->$method($value);
+				
+				$classes[] = str_replace(" ", "-", "{$field}-{$value}");
+			}
+		}
+		
+		return implode(" ", $classes);
+	}
+	
 	public function getSampleData()
 	{
 		return array(

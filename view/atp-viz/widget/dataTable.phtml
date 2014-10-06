@@ -11,7 +11,7 @@
 			</thead>
 			<tbody>
 				<?php foreach($data['data'] as $row) { ?>
-					<tr>
+					<tr class="<?=$this->widget->getClasses($row)?>">
 						<?php foreach($row as $column => $value) { ?>
 							<td class="<?=$column?>"><?=$value?></td>
 						<?php } ?>

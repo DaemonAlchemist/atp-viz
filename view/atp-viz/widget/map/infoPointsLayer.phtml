@@ -65,6 +65,13 @@ var <?=$name?>InfoTemplate = new esri.InfoTemplate({
 
 var <?=$name?>FeatureLayer = null;
 
+<?php if($hidePopupOnZoom) { ?>
+	$(".zoomTo").click(function(){
+		map.infoWindow.hide();
+		return true;
+	});
+<?php } ?>
+	
 var <?=$name?>LayerUpdate = function(){
 	$.ajax({
 		url: '<?=$this->basePath()?>/dashboard/dataSource/get-data?dataSource=<?=$dataSource?>',

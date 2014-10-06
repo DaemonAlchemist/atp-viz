@@ -22,7 +22,9 @@ class DataTable extends \ATPViz\Widget\AbstractWidget
 				$method = "get{$field}Class";
 				if(method_exists($this, $method)) $value = $this->$method($value);
 				
-				$classes[] = str_replace(" ", "-", "{$field}-{$value}");
+				$class = str_replace(array("/", " "), "-", trim("{$field}-{$value}"));
+				while(strpos($class, "--") !== false) $class = str_replace("--", "-", $class);
+				$classes[] = $class;
 			}
 		}
 		

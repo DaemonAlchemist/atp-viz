@@ -13,17 +13,19 @@
 			basemap: '<?=$baseMap?>'
 		});
 		
+		var toggleLayers = {};
 		var addVisibilityToggle = function(layer, layerId, layerLabel, isVisible){
 			var inputId = layerId + "VisibilityToggle";
+			toggleLayers[inputId] = layer;
 			
 			//Create the checkbox if it doesn't exist
 			if($("#" + inputId).length == 0) {
-				var html = "<li>";
+				var html = "<li><div>";
 				html += "<input type=\"checkbox\" id=\"" + inputId + "\"";
 				if(isVisible) html += " checked";
 				html += "/>";
 				html +=	"<label>" + layerLabel + "</label>";
-				html += "</li>";
+				html += "</div></li>";
 				$("div#<?=$name?> ul.visibility-toggles").append(html);
 				$("div#<?=$name?> div.legend div.accordion").accordion("refresh");
 			}
@@ -37,7 +39,25 @@
 			});
 		};
 		
+		var disableToggles = function(){
+			for(inputId in toggleLayers) {
+				var item = $("#" + inputId).parent();
+				if(toggleLayers[inputId].visibleAtMapScale) {
+					item.removeClass("disabled");
+					item.find("*").enable();
+				} else {
+					item.addClass("disabled");
+					item.find("*").disable();
+				}
+				//alert(inputId);
+			}
+		};
+		
+		map.on("zoom-end", disableToggles);
+
 		<?=$layers?>
+		
+		disableToggles();
 		
 		<?php if(!empty($altBaseMap)) { ?>
 			var toggle = new esri.dijit.BasemapToggle({map: map, basemap: "<?=$altBaseMap?>"}, "basemap-toggle");

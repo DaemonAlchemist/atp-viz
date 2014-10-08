@@ -1,10 +1,8 @@
 <?php
 return array(
-	'asset_manager' => array(
-		'resolver_configs' => array(
-			'paths' => array(
-				__DIR__ . '/../public',
-			),
+	'modules' => array(
+		'ATPAdmin' => array(
+			'version' => '0.9.0',
 		),
 	),
     'service_manager' => array(
@@ -12,13 +10,4 @@ return array(
 			'DataSourceFactory' => 'ATPViz\DataSource\DataSourceFactory',
         ),
     ),
-    'view_manager' => array(
-        'template_path_stack' => array(
-            __DIR__ . '/../view',
-        ),
-	),
-	'view_helpers' => array(
-		'invokables' => array(
-		)
-	),
 );

@@ -30,11 +30,12 @@ class Container extends \Zend\View\Model\ViewModel
 		return $this->_sm;
 	}
 	
-	public function addWidget($name)
+	public function addWidget($name, $options)
 	{
 		if(isset($this->_allWidgets[$name]))
 		{
 			$widgetInfo = $this->_allWidgets[$name];
+			$widgetInfo['options'] = array_merge($widgetInfo['options'], $options);
 			$widgetClass = $widgetInfo['class'];
 			$widget = new $widgetClass();
 			$widget->setServiceLocator($this->getServiceLocator());

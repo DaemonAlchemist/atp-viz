@@ -7,7 +7,7 @@
 	<?php } ?>
 
 	dojo.addOnLoad(function(){
-		var map = new esri.Map("<?=$id?>",{
+		var map = new esri.Map("<?=$cssId?>",{
 			center: [<?=$center['x']?>, <?=$center['y']?>],
 			zoom: <?=$zoom?>,
 			basemap: '<?=$baseMap?>'
@@ -72,7 +72,7 @@
 </script>
 
 <div id="<?=$name?>" class="widget map-widget ui-widget ui-corner-all border-box">
-	<h2 class="ui-widget-header ui-corner-all"><?=$title?></h2>
+	<h2 class="ui-widget-header ui-corner-all"><?=$label?></h2>
 	<div class="ui-widget-content">
 		<div class="legend">
 			<div class="accordion">
@@ -87,7 +87,7 @@
 				</div>
 			</div>
 		</div>
-		<div id="<?=$id?>" class="map" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region: 'center'">
+		<div id="<?=$cssId?>" class="map" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region: 'center'">
 			<div id="home-button"></div>
 			<div id="basemap-toggle"></div>
 		</div>

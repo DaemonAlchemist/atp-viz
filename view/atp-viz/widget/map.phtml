@@ -74,7 +74,7 @@
 <div id="<?=$name?>" class="widget map-widget ui-widget ui-corner-all border-box">
 	<h2 class="ui-widget-header ui-corner-all"><?=$label?></h2>
 	<div class="ui-widget-content">
-		<div class="legend">
+		<div class="legend" <?php if(!$showLegend) { ?>style="display: none;"<?php } ?>>
 			<div class="accordion">
 				<h3>Legend</h3>
 				<div>
@@ -87,7 +87,7 @@
 				</div>
 			</div>
 		</div>
-		<div id="<?=$cssId?>" class="map" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region: 'center'">
+		<div id="<?=$cssId?>" class="map <?php if(!$showLegend) { ?>full-map<?php } ?>" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region: 'center'">
 			<div id="home-button"></div>
 			<div id="basemap-toggle"></div>
 		</div>

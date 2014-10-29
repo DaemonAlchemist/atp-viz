@@ -26,6 +26,7 @@ class SOAP extends AbstractDataSource
 		$function = $options['function'];
 		$node = $client->$function();
 		
+		$node = $node["{$function}Response"]["{$function}Result"];
 		if(isset($options['dataElement']))
 		{
 			$nodes = explode("\\", $options['dataElement']);

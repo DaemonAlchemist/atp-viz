@@ -5,7 +5,7 @@
 			<thead>
 				<tr>
 					<?php foreach($data['columns'] as $column) { ?>
-						<th><?=$column?></th>
+						<th><?=\ATP\Inflector::titleize($column)?></th>
 					<?php } ?>
 				</tr>
 			</thead>

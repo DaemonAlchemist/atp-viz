@@ -23,7 +23,8 @@ class SOAP extends AbstractDataSource
 		}
 		$client->__setHeaders($headers);
 		
-		$node = $client->GetAllSCADAAnalogs();
+		$function = $options['function'];
+		$node = $client->$function();
 		
 		if(isset($options['dataElement']))
 		{

@@ -39,4 +39,14 @@ class AbstractDataSource
 	{
 		return $this->_sm->get($resource);
 	}
+	
+	public function __get($var)
+	{
+		return isset($this->_options[$var]) ? $this->_options[$var] : null;
+	}
+	
+	public function __set($var, $val)
+	{
+		$this->_options[$var] = $val;
+	}
 }

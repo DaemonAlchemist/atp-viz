@@ -74,7 +74,7 @@ var <?=$name?>FeatureLayer = null;
 	
 var <?=$name?>LayerUpdate = function(){
 	$.ajax({
-		url: '<?=$this->basePath()?>/dashboard/dataSource/get-data?dataSource=<?=$dataSource?>',
+		url: '<?=$this->basePath()?><?=$updateUrl?>',
 		success: function(data) {
 			if(<?=$name?>FeatureLayer) map.removeLayer(<?=$name?>FeatureLayer);
 			<?=$name?>FeatureCollection.featureSet.features = [];

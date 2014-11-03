@@ -4,7 +4,7 @@ namespace ATPViz\DataSource;
 
 class SOAP extends AbstractDataSource
 {
-	public function getData()
+	public function getData($soapParams = array())
 	{
 		$options = $this->getOptions();
 		$url = $options['url'];
@@ -24,7 +24,8 @@ class SOAP extends AbstractDataSource
 		$client->__setHeaders($headers);
 		
 		$function = $options['function'];
-		$node = $client->$function();
+		$node = $client->$function($soapParams);
+		
 		
 		$node = $node["{$function}Response"]["{$function}Result"];
 		if(isset($options['dataElement']))
@@ -38,17 +39,28 @@ class SOAP extends AbstractDataSource
 		
 		if($options['extractAttributes'])
 		{
-			foreach($node as &$item)
+			if($options['isScalar'])
 			{
-				if(isset($item['@attributes']))
+				if(isset($node['@attributes']))
 				{
-					$item = array_merge($item, $item['@attributes']);
-					unset($item['@attributes']);
+					$node = array_merge($node, $node['@attributes']);
+					unset($node['@attributes']);
+				}
+			}
+			else
+			{
+				foreach($node as &$item)
+				{
+					if(isset($item['@attributes']))
+					{
+						$item = array_merge($item, $item['@attributes']);
+						unset($item['@attributes']);
+					}
 				}
 			}
 		}
 		
-		$columns = count($node) > 0 ? array_keys($node[0]) : array();
+		$columns = count($node) > 0 && isset($node[0]) ? array_keys($node[0]) : array();
 		
 		return array(
 			'columns' => $columns,

@@ -19,6 +19,14 @@ class AbstractWidget extends \Zend\View\Model\ViewModel
 		return $this->_sm;
 	}
 	
+	public function setData($data)
+	{
+		foreach($data as $name => $value)
+		{
+			$this->$name = $value;
+		}
+	}
+	
 	public function setDataSource($src)
 	{
 		$this->_dataSource = $src;

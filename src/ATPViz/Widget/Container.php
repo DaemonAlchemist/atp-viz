@@ -7,7 +7,7 @@ class Container extends \Zend\View\Model\ViewModel
 	private $_allWidgets = array();
 	private $_sm = null;
 
-	public function __construct($config, $sm)
+	public function __construct($config, $sm, $data)
 	{
 		//Initialize the view
 		parent::__construct();
@@ -18,6 +18,12 @@ class Container extends \Zend\View\Model\ViewModel
 		
 		//Set the template
 		$this->setTemplate('atp-viz/widget/container.phtml');		
+		
+		//Set the data
+		foreach($data as $name => $value)
+		{
+			$this->$name = $value;
+		}
 	}
 	
 	public function setServiceLocator($sm)
@@ -30,18 +36,28 @@ class Container extends \Zend\View\Model\ViewModel
 		return $this->_sm;
 	}
 	
-	public function addWidget($name, $options)
+	public function addWidget($name, $options, $data)
 	{
 		if(isset($this->_allWidgets[$name]))
 		{
+			//Get widget info
 			$widgetInfo = $this->_allWidgets[$name];
 			$widgetInfo['options'] = array_merge($widgetInfo['options'], $options);
 			$widgetClass = $widgetInfo['class'];
-			$widget = new $widgetClass();
+			
+			//Create the widget
+			$widget = new $widgetClass();			
 			$widget->setServiceLocator($this->getServiceLocator());
+			
+			//Set the widget options
 			$widget->setOptions($widgetInfo['options']);
+			$widget->setData($data);
 			$widget->name = $name;
-			$widget->setDataSource($this->getServiceLocator()->get('DataSourceFactory')->getInstance($widgetInfo['dataSource']));
+			
+			//Set the widget data source
+			$dataSource = $this->getServiceLocator()->get('DataSourceFactory')->getInstance($widgetInfo['dataSource']);
+			if(!is_null($dataSource)) $dataSource->setData($data);
+			$widget->setDataSource($dataSource);
 		}
 		else
 		{

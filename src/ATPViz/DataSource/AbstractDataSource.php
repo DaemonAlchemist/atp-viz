@@ -17,6 +17,14 @@ class AbstractDataSource
 		return $this->_options;
 	}
 	
+	public function setData($data)
+	{
+		foreach($data as $name => $value)
+		{
+			$this->$name = $value;
+		}
+	}
+
 	public function setServiceLocator($sm)
 	{
 		$this->_sm = $sm;

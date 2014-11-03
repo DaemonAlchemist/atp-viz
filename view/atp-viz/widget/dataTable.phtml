@@ -1,3 +1,48 @@
+<?php if($this->updateUrl) { ?>
+	<script>
+		var <?=$name?>Data = <?=json_encode(array_intersect_key((array)$this->vars(), array_flip($this->queryVars)))?>;
+		var <?=$name?>UpdateUrl = "<?=$this->updateUrl?>";
+		var <?=$name?>UpdateFrequency = <?=$this->updateFrequency?>;
+		
+		var <?=$name?>Updater = function(){
+			$.ajax({
+				url: "<?=$this->basePath()?><?=$this->updateUrl?>",
+				type: 'GET',
+				data: <?=$name?>Data,
+				dataType: "json",
+				error: function(jqXHR, textStatus, errorThrown ){
+					//alert(textStatus + ": " + errorThrown);
+				},
+				success: function(data, textStatus, jqXHR) {
+					var table = $("table#<?=$cssId?>");
+					var header = table.find("thead tr");
+					var body = table.find("tbody");
+					
+					header.find("th").remove();
+					body.find("tr").remove();
+					
+					data.columns.forEach(function(val){
+						header.append("<th>" + val + "</th>");
+					});
+					
+					data.data.forEach(function(row){
+						var html = "<tr>";						
+						for(column in row){
+							html += "<td class=\"" + column + "\">";
+							html += row[column];
+							html += "</td>";
+						}						
+						html += "</tr>";
+						
+						body.append(html);
+					});
+				}
+			});
+		};
+		setInterval(<?=$name?>Updater, <?=$name?>UpdateFrequency * 1000);
+	</script>
+<?php } ?>
+
 <div id="<?=$name?>" class="widget ui-widget ui-corner-all border-box">
 	<h2 class="ui-widget-header ui-corner-all"><?=$label?></h2>
 	<div class="ui-widget-content">

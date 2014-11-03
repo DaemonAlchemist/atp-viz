@@ -24,9 +24,24 @@ class DataSourceFactory implements \Zend\ServiceManager\FactoryInterface
 			
 			if(isset($dataSourceDefinitions[$dataSourceName]))
 			{
-				$dataSourceClass = $dataSourceDefinitions[$dataSourceName]['class'];
+				//Load data source definition, including inheritance
+				$dataSourceDef = $dataSourceDefinitions[$dataSourceName];
+				while(isset($dataSourceDef['inherit']))
+				{
+					$inherit = $dataSourceDef['inherit'];
+					unset($dataSourceDef['inherit']);
+					$dataSourceDef = array_merge_recursive(
+						$dataSourceDef,
+						$dataSourceDefinitions[$inherit]
+					);
+				}
+			
+				$dataSourceClass = $dataSourceDef['class'];
 				$dataSource = new $dataSourceClass();
-				$dataSource->setOptions($dataSourceDefinitions[$dataSourceName]['options']);
+				
+				$options = $dataSourceDef['options'];
+				
+				$dataSource->setOptions($options);
 				$dataSource->setServiceLocator($this->_sm);
 				
 				$dataSources[$dataSourceName] = $dataSource;

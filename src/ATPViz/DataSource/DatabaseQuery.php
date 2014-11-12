@@ -28,13 +28,13 @@ class DatabaseQuery extends AbstractDataSource
 			}
 		}
 		
-		$columns = count($rows) > 0
-			? array_keys(current($rows))
-			: array("<em>No Results</em>");
-		if(!is_null($indVar)) array_unshift($columns, $indVar);
-
+		if(!isset($options['columns']))
+		{
+			throw new \Exception("Chart column definitions not set");
+		}
+		
 		return array(
-			'columns' => $columns,
+			'columns' => $options['columns'],
 			'data' => $rows
 		);
 	}

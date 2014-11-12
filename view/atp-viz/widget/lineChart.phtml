@@ -2,12 +2,22 @@
 	google.load("visualization", "1", {packages: ["corechart"]});
 	google.setOnLoadCallback(drawChart);
 	function drawChart() {
-		var data = google.visualization.arrayToDataTable([
-			[<?=\ATP\MapReduce::wrapJoin($data['columns'], ",", "'")?>]
-			<?php foreach($data['data'] as $x => $vals) { ?>
-				,['<?=$x?>', <?=\ATP\MapReduce::wrapJoin($vals, ",")?>]
-			<?php } ?>
-		]);
+		var data = new google.visualization.DataTable();
+		<?php foreach($data['columns'] as $column => $dataType) { ?>
+			data.addColumn('<?=$dataType?>', '<?=$column?>');
+		<?php } ?>
+		data.addRows([<?=\ATP\MapReduce::process(
+			$data['data'],
+			function($vals, $key) use ($data){
+				$columnNames = array_keys($data['columns']);
+				$keyName = $columnNames[0];
+				$key = (strpos($data['columns'][$keyName], 'date') === false)
+					? "'{$key}'"
+					: "new Date('" . str_replace(" ", "T", $key) . "')";
+				return "[{$key}, " . \ATP\MapReduce::wrapJoin($vals, ",") . "]";
+			},
+			new \ATP\Reducer\Concatenate(",")
+		)?>]);
 		
 		var options = <?=$chartOptions?>;
 		

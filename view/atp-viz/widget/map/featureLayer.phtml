@@ -58,6 +58,10 @@ var <?=$name?>AddLayer = function(){
 		<?=$name?>Layer.setMinScale(<?=$minScale?>);
 	<?php } ?>
 
+	<?php if($includeInLegend) { ?>
+		legendLayers.push({layer: <?=$name?>Layer, title: "<?=$label?>"});
+	<?php } ?>
+	
 	map.addLayer(<?=$name?>Layer);
 	
 	<?php if($showLabels) { ?>

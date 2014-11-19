@@ -111,3 +111,7 @@ var <?=$name?>LayerUpdate = function(){
 	});
 };
 <?=$name?>LayerUpdate();
+
+<?php if($includeInLegend) { ?>
+	legendLayers.push({layer: <?=$name?>FeatureLayer, title: "<?=$label?>"});
+<?php } ?>

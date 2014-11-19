@@ -2,6 +2,7 @@
 	dojo.require("esri.map");
 	dojo.require("esri/dijit/HomeButton");
 	dojo.require("esri/dijit/BasemapToggle");
+	dojo.require("esri/dijit/Legend");
 	<?php foreach($requires as $req) { ?>
 		dojo.require('<?=$req?>');
 	<?php } ?>
@@ -58,7 +59,15 @@
 		
 		map.on("zoom-end", disableToggles);
 
+		var legendLayers = [];
+			
 		<?=$layers?>
+		
+		var legend = new esri.dijit.Legend({
+			map: map,
+			layerInfos: legendLayers
+		}, "legendDiv");
+		legend.startup();
 		
 		disableToggles();
 		
@@ -80,9 +89,7 @@
 		<div class="legend" <?php if(!$showLegend) { ?>style="display: none;"<?php } ?>>
 			<div class="accordion">
 				<h3>Legend</h3>
-				<div>
-					Show legend image here.
-				</div>
+				<div id="legendDiv"></div>
 				<h3>Show Layers</h3>
 				<div>
 					<ul class="visibility-toggles">

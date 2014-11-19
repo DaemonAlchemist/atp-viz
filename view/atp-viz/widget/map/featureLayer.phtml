@@ -31,9 +31,9 @@ var <?=$name?>Layer;
 			<div id=\"<?=$name?>-info-template\">\
 				<h2><?=$infoWindowTitle?></h2>\
 				<table>\
-					<?php foreach($popupFields as $field => $label) { ?>\
+					<?php foreach($popupFields as $field => $fieldLabel) { ?>\
 						<tr>\
-							<td><?=$label?></td>\
+							<td><?=$fieldLabel?></td>\
 							<td>${<?=$field?>}</td>\
 						</tr>\
 					<?php } ?>\

@@ -24,6 +24,12 @@ class Map extends \ATPViz\Widget\AbstractWidget
 				$requires[] = $req;
 			}
 		
+			//Add labeling requires
+			$requires[] = "esri.symbols.TextSymbol";
+			$requires[] = "esri.renderers.SimpleRenderer";
+			$requires[] = "esri.layers.LabelLayer";
+			$requires[] = "esri.Color";
+		
 			//Create layer sub-widget
 			$class = $layer['class'];
 			$widget = new $class();

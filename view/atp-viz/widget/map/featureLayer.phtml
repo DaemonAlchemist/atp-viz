@@ -45,5 +45,15 @@ var <?=$name?>AddLayer = function(){
 	<?=$name?>Layer.setVisibility(<?=$visible ? 'true' : 'false'?>);
 	
 	map.addLayer(<?=$name?>Layer);
+	
+	<?php if($showLabels) { ?>
+		var <?=$name?>Label = new esri.symbol.TextSymbol().setColor(new esri.Color("<?=$labelOptions['color']?>"));
+		<?=$name?>Label.font.setSize("<?=$labelOptions['size']?>");
+		<?=$name?>Label.font.setFamily("<?=$labelOptions['font']?>");
+		var <?=$name?>LabelRenderer = new esri.renderer.SimpleRenderer(<?=$name?>Label);
+		var <?=$name?>Labels = new esri.layers.LabelLayer({id: "<?=$name?>Labels"});
+		<?=$name?>Labels.addFeatureLayer(<?=$name?>Layer, <?=$name?>LabelRenderer, "<?=$labelOptions['format']?>");
+		map.addLayer(<?=$name?>Labels);
+	<?php } ?>
 };
 <?=$name?>AddLayer();

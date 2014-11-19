@@ -25,6 +25,25 @@ var <?=$name?>Layer;
 	<?=$extra?>
 <?php } ?>
 
+<?php if(isset($popupFields)) { ?>
+	var <?=$name?>InfoTemplate = new esri.InfoTemplate({
+		content: "\
+			<div id=\"<?=$name?>-info-template\">\
+				<h2><?=$infoWindowTitle?></h2>\
+				<table>\
+					<?php foreach($popupFields as $field => $label) { ?>\
+						<tr>\
+							<td><?=$label?></td>\
+							<td>${<?=$field?>}</td>\
+						</tr>\
+					<?php } ?>\
+				</table>\
+			</div>\
+		"
+	});
+	<?=$name?>Options.infoTemplate = <?=$name?>InfoTemplate;
+<?php } ?>
+
 var <?=$name?>AddLayer = function(){
 	<?=$name?>Layer = new <?=$class?>(
 		"<?=$endpoint?>",
@@ -39,11 +58,6 @@ var <?=$name?>AddLayer = function(){
 		<?=$name?>Layer.setMinScale(<?=$minScale?>);
 	<?php } ?>
 
-	<?php if($showVisibilityToggle) { ?>
-		addVisibilityToggle(<?=$name?>Layer, '<?=$name?>', '<?=$label?>', <?=$visible ? 'true' : 'false'?>);
-	<?php } ?>
-	<?=$name?>Layer.setVisibility(<?=$visible ? 'true' : 'false'?>);
-	
 	map.addLayer(<?=$name?>Layer);
 	
 	<?php if($showLabels) { ?>
@@ -65,6 +79,16 @@ var <?=$name?>AddLayer = function(){
 		?>";
 		<?=$name?>Labels.addFeatureLayer(<?=$name?>Layer, <?=$name?>LabelRenderer, <?=$name?>LabelFormat);
 		map.addLayer(<?=$name?>Labels);
+		<?=$name?>Labels.setVisibility(<?=$visible ? 'true' : 'false'?>);
 	<?php } ?>
+
+	<?php if($showVisibilityToggle) { ?>
+		<?php if($showLabels) { ?>
+			addVisibilityToggle([<?=$name?>Layer, <?=$name?>Labels], '<?=$name?>', '<?=$label?>', <?=$visible ? 'true' : 'false'?>);
+		<?php } else { ?>
+			addVisibilityToggle([<?=$name?>Layer], '<?=$name?>', '<?=$label?>', <?=$visible ? 'true' : 'false'?>);
+		<?php } ?>
+	<?php } ?>
+	<?=$name?>Layer.setVisibility(<?=$visible ? 'true' : 'false'?>);
 };
 <?=$name?>AddLayer();

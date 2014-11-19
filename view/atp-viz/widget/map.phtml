@@ -14,9 +14,9 @@
 		});
 		
 		var toggleLayers = {};
-		var addVisibilityToggle = function(layer, layerId, layerLabel, isVisible){
+		var addVisibilityToggle = function(layers, layerId, layerLabel, isVisible){
 			var inputId = layerId + "VisibilityToggle";
-			toggleLayers[inputId] = layer;
+			toggleLayers[inputId] = layers;
 			
 			//Create the checkbox if it doesn't exist
 			if($("#" + inputId).length == 0) {
@@ -35,14 +35,17 @@
 			
 			//Toggle layer visibility when checkbox clicked
 			$("#" + inputId).click(function(){
-				layer.setVisibility(this.checked);
+				var checkbox = this;
+				layers.forEach(function(layer){
+					layer.setVisibility(checkbox.checked);
+				});
 			});
 		};
 		
 		var disableToggles = function(){
 			for(inputId in toggleLayers) {
 				var item = $("#" + inputId).parent();
-				if(toggleLayers[inputId].visibleAtMapScale) {
+				if(toggleLayers[inputId][0].visibleAtMapScale) {
 					item.removeClass("disabled");
 					item.find("*").enable();
 				} else {

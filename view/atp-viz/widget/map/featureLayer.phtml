@@ -47,12 +47,23 @@ var <?=$name?>AddLayer = function(){
 	map.addLayer(<?=$name?>Layer);
 	
 	<?php if($showLabels) { ?>
-		var <?=$name?>Label = new esri.symbol.TextSymbol().setColor(new esri.Color("<?=$labelOptions['color']?>"));
-		<?=$name?>Label.font.setSize("<?=$labelOptions['size']?>");
-		<?=$name?>Label.font.setFamily("<?=$labelOptions['font']?>");
+		var <?=$name?>LabelColor = "<?=(isset($layerOptions['color'])) ? $layerOptions['color'] : "#000"?>";
+		var <?=$name?>Label = new esri.symbol.TextSymbol().setColor(new esri.Color(<?=$name?>LabelColor));
+
+		var <?=$name?>LabelSize = "<?=(isset($layerOptions['size'])) ? $layerOptions['size'] : "8pt"?>";
+		<?=$name?>Label.font.setSize(<?=$name?>LabelSize);
+
+		var <?=$name?>LabelFont = "<?=(isset($layerOptions['font'])) ? $layerOptions['font'] : "arial"?>";
+		<?=$name?>Label.font.setFamily(<?=$name?>LabelFont);
+
 		var <?=$name?>LabelRenderer = new esri.renderer.SimpleRenderer(<?=$name?>Label);
 		var <?=$name?>Labels = new esri.layers.LabelLayer({id: "<?=$name?>Labels"});
-		<?=$name?>Labels.addFeatureLayer(<?=$name?>Layer, <?=$name?>LabelRenderer, "<?=$labelOptions['format']?>");
+		
+		var <?=$name?>LabelFormat = "<?=(isset($layerOptions['format']))
+			? $layerOptions['format']
+			: '${" + ' . $name . 'Options.outFields[0] + "}'
+		?>";
+		<?=$name?>Labels.addFeatureLayer(<?=$name?>Layer, <?=$name?>LabelRenderer, <?=$name?>LabelFormat);
 		map.addLayer(<?=$name?>Labels);
 	<?php } ?>
 };

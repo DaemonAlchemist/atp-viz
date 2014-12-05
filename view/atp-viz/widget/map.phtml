@@ -1,5 +1,8 @@
+<?php $this->appendCss("atp-viz/css/style.less")?>
 <script type="text/javascript">
 	dojo.require("esri.map");
+	dojo.require("esri/toolbars/navigation");
+	dojo.require("dijit/registry");
 	dojo.require("esri/dijit/HomeButton");
 	dojo.require("esri/dijit/BasemapToggle");
 	dojo.require("esri/dijit/Legend");
@@ -14,6 +17,43 @@
 			basemap: '<?=$baseMap?>'
 		});
 		
+		var navToolbar = new esri.toolbars.Navigation(map);
+		
+		//on(navToolbar, "onExtentHistoryChange", extentHistoryChangeHandler);
+	
+		$(".zoomin").click(function () {
+			navToolbar.activate(esri.toolbars.Navigation.ZOOM_IN);
+		});
+
+		$(".zoomout").click(function () {
+			navToolbar.activate(esri.toolbars.Navigation.ZOOM_OUT);
+		});
+
+		$(".zoomfullext").click(function () {
+			navToolbar.zoomToFullExtent();
+		});
+
+		$(".zoomprev").click(function () {
+			navToolbar.zoomToPrevExtent();
+		});
+
+		$(".zoomnext").click(function () {
+			navToolbar.zoomToNextExtent();
+		});
+
+		$(".pan").click(function () {
+			navToolbar.activate(esri.toolbars.Navigation.PAN);
+		});
+
+		$(".deactivate").click(function () {
+			navToolbar.deactivate();
+		});
+
+		function extentHistoryChangeHandler () {
+			$(".zoomprev").disabled = navToolbar.isFirstExtent();
+			$(".zoomnext").disabled = navToolbar.isLastExtent();
+		}
+
 		var toggleLayers = {};
 		var addVisibilityToggle = function(layers, layerId, layerLabel, isVisible){
 			var inputId = layerId + "VisibilityToggle";
@@ -96,6 +136,15 @@
 					</ul>
 				</div>
 			</div>
+		</div>
+		<div id="navToolbar" data-dojo-type="dijit/Toolbar">
+			<div class="navButton zoomin">Zoom In</div>
+			<div class="navButton zoomout">Zoom Out</div>
+			<div class="navButton zoomfullext">Full Extent</div>
+			<div class="navButton zoomprev">Prev Extent</div>
+			<div class="navButton zoomnext">Next Extent</div>
+			<div class="navButton pan">Pan</div>
+			<div class="navButton deactivate">Deactivate</div>
 		</div>
 		<div id="<?=$cssId?>" class="map <?php if(!$showLegend) { ?>full-map<?php } ?>" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region: 'center'">
 			<div id="home-button"></div>

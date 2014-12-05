@@ -1,0 +1,25 @@
+#navToolbar {
+ position: absolute;
+ right: 0;
+ background: transparent;
+ z-index: 999;
+}
+#navToolbar .navButton {
+ border: solid 1px;
+ margin: 4px;
+ width: 24px;
+ height: 24px;
+ float: left;
+}
+#basemap-toggle {
+ position: absolute;
+ top: 145px;
+ left: 10px;
+ z-index: 999;
+}
+#home-button {
+ position: absolute;
+ top: 100px;
+ left: 25px;
+ z-index: 999;
+}

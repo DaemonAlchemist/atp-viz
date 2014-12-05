@@ -1,13 +1,20 @@
 #navToolbar {
 	position: absolute;
-	right: 0;
-	background: transparent;
+	right: 12px;
+	background-color: rgba(1,1,1,0.25);
 	z-index:999;
 	.navButton {
-		border: solid 1px;
 		margin: 4px;
-		width: 24px; height: 24px;
+		width: 16px; height: 16px;
 		float: left;
+		text-indent: -9999px;
+		&.zoomin {background: url("icons/nav_zoomin.png");}
+		&.zoomout {background: url("icons/nav_zoomout.png");}
+		&.zoomfullext {background: url("icons/nav_fullextent.png");}
+		&.zoomprev {background: url("icons/nav_previous.png");}
+		&.zoomnext {background: url("icons/nav_next.png");}
+		&.pan {background: url("icons/nav_pan.png");}
+		&.deactivate {background: url("icons/nav_decline.png");}
 	}
 }
 

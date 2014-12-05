@@ -1,15 +1,36 @@
 #navToolbar {
  position: absolute;
- right: 0;
- background: transparent;
+ right: 12px;
+ background-color: rgba(1,1,1,0.25);
  z-index: 999;
 }
 #navToolbar .navButton {
- border: solid 1px;
  margin: 4px;
- width: 24px;
- height: 24px;
+ width: 16px;
+ height: 16px;
  float: left;
+ text-indent: -9999px;
+}
+#navToolbar .navButton.zoomin {
+ background: url("icons/nav_zoomin.png");
+}
+#navToolbar .navButton.zoomout {
+ background: url("icons/nav_zoomout.png");
+}
+#navToolbar .navButton.zoomfullext {
+ background: url("icons/nav_fullextent.png");
+}
+#navToolbar .navButton.zoomprev {
+ background: url("icons/nav_previous.png");
+}
+#navToolbar .navButton.zoomnext {
+ background: url("icons/nav_next.png");
+}
+#navToolbar .navButton.pan {
+ background: url("icons/nav_pan.png");
+}
+#navToolbar .navButton.deactivate {
+ background: url("icons/nav_decline.png");
 }
 #basemap-toggle {
  position: absolute;

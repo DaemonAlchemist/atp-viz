@@ -51,6 +51,8 @@
 					});
 					<?php if($updateRowMode == 'replace') { ?><?=$name?>ChartData.removeRows(0,999999999999);<?php } ?>
 					<?=$name?>ChartData.addRows(data);
+					<?=$name?>ChartOptions.hAxis.viewWindow.min = <?=$hAxisMinUpdate?>;
+					<?=$name?>ChartOptions.hAxis.viewWindow.max = <?=$hAxisMaxUpdate?>;
 					<?=$name?>Chart.draw(<?=$name?>ChartData, <?=$name?>ChartOptions);
 				}
 			});

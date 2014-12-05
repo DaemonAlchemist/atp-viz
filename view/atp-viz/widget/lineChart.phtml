@@ -1,12 +1,15 @@
 <script type="text/javascript">
 	google.load("visualization", "1", {packages: ["corechart"]});
-	google.setOnLoadCallback(drawChart);
-	function drawChart() {
-		var data = new google.visualization.DataTable();
+	google.setOnLoadCallback(<?=$name?>DrawChart);
+	var <?=$name?>Chart;
+	var <?=$name?>ChartData;
+	var <?=$name?>ChartOptions = <?=$chartOptions?>;
+	function <?=$name?>DrawChart() {
+		<?=$name?>ChartData = new google.visualization.DataTable();
 		<?php foreach($data['columns'] as $column => $dataType) { ?>
-			data.addColumn('<?=$dataType?>', '<?=$column?>');
+			<?=$name?>ChartData.addColumn('<?=$dataType?>', '<?=$column?>');
 		<?php } ?>
-		data.addRows([<?=\ATP\MapReduce::process(
+		<?=$name?>ChartData.addRows([<?=\ATP\MapReduce::process(
 			$data['data'],
 			function($vals, $key) use ($data){
 				$columnNames = array_keys($data['columns']);
@@ -19,12 +22,44 @@
 			new \ATP\Reducer\Concatenate(",")
 		)?>]);
 		
-		var options = <?=$chartOptions?>;
+		<?=$name?>Chart = new google.visualization.LineChart(document.getElementById('<?=$cssId?>'));
+		<?=$name?>Chart.draw(<?=$name?>ChartData, <?=$name?>ChartOptions);
 		
-		var chart = new google.visualization.LineChart(document.getElementById('<?=$cssId?>'));
-		chart.draw(data, options);
 	};
+
+	<?php if($this->updateUrl) { ?>
+		var <?=$name?>Data = <?=json_encode(array_intersect_key((array)$this->vars(), array_flip($this->queryVars)))?>;
+		var <?=$name?>UpdateUrl = "<?=$this->updateUrl?>";
+		var <?=$name?>UpdateFrequency = <?=$this->updateFrequency?>;
+		
+		var <?=$name?>Updater = function(){
+			$.ajax({
+				url: "<?=$this->basePath()?><?=$this->updateUrl?>",
+				type: 'GET',
+				data: <?=$name?>Data,
+				dataType: "json",
+				error: function(jqXHR, textStatus, errorThrown ){
+					//alert(textStatus + ": " + errorThrown);
+				},
+				success: function(data, textStatus, jqXHR) {
+					data.forEach(function(row, index){
+						<?php foreach(array_values($data['columns']) as $index => $type) { ?>
+							<?php if(strpos($type, 'date') !== false) { ?>
+								data[index][<?=$index?>] = new Date(data[index][<?=$index?>]);
+							<?php } ?>
+						<?php } ?>
+					});
+					<?php if($updateRowMode == 'replace') { ?><?=$name?>ChartData.removeRows(0,999999999999);<?php } ?>
+					<?=$name?>ChartData.addRows(data);
+					<?=$name?>Chart.draw(<?=$name?>ChartData, <?=$name?>ChartOptions);
+				}
+			});
+		};
+		setInterval(<?=$name?>Updater, <?=$name?>UpdateFrequency * 1000);
+		//<?=$name?>Updater();
+	<?php } ?>
 </script>
+
 <div id="<?=$name?>" class="widget ui-widget ui-corner-all border-box">
 	<h2 class="ui-widget-header ui-corner-all"><?=$label?></h2>
 	<div class="ui-widget-content">

@@ -42,6 +42,15 @@ class Container extends \Zend\View\Model\ViewModel
 		{
 			//Get widget info
 			$widgetInfo = $this->_allWidgets[$name];
+			while(isset($widgetInfo['inherit']))
+			{
+				$inherit = $widgetInfo['inherit'];
+				unset($widgetInfo['inherit']);
+				$widgetInfo = array_merge_recursive(
+					$widgetInfo,
+					$this->_allWidgets[$inherit]
+				);
+			}
 			$widgetInfo['options'] = array_merge($widgetInfo['options'], $options);
 			$widgetClass = $widgetInfo['class'];
 			

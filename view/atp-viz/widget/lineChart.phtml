@@ -3,7 +3,7 @@
 	google.setOnLoadCallback(<?=$name?>DrawChart);
 	var <?=$name?>Chart;
 	var <?=$name?>ChartData;
-	var <?=$name?>ChartOptions = <?=$chartOptions?>;
+	var <?=$name?>ChartOptions = <?=is_array($chartOptions) ? \Zend\Json\Json::encode($chartOptions, false, array('enableJsonExprFinder' => true)) : $chartOptions?>;
 	function <?=$name?>DrawChart() {
 		<?=$name?>ChartData = new google.visualization.DataTable();
 		<?php foreach($data['columns'] as $column => $dataType) { ?>
@@ -16,7 +16,7 @@
 				$keyName = $columnNames[0];
 				$key = (strpos($data['columns'][$keyName], 'date') === false)
 					? "'{$key}'"
-					: "new Date('" . str_replace(" ", "T", $key) . "')";
+					: "new Date('" . str_replace(" ", "T", $key) . "-06:00')";
 				return "[{$key}, " . \ATP\MapReduce::wrapJoin($vals, ",") . "]";
 			},
 			new \ATP\Reducer\Concatenate(",")
@@ -45,7 +45,7 @@
 					data.forEach(function(row, index){
 						<?php foreach(array_values($data['columns']) as $index => $type) { ?>
 							<?php if(strpos($type, 'date') !== false) { ?>
-								data[index][<?=$index?>] = new Date(data[index][<?=$index?>]);
+								data[index][<?=$index?>] = new Date(data[index][<?=$index?>] + "-06:00");
 							<?php } ?>
 						<?php } ?>
 					});

@@ -21,9 +21,9 @@
 					header.find("th").remove();
 					body.find("tr").remove();
 					
-					data.columns.forEach(function(val){
-						header.append("<th>" + val + "</th>");
-					});
+					for(column in data.columns) {
+						header.append("<th>" + column + "</th>");
+					};
 					
 					data.data.forEach(function(row){
 						var html = "<tr>";						

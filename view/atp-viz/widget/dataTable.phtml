@@ -49,7 +49,7 @@
 		<table id="<?=$cssId?>" class="data-table">
 			<thead>
 				<tr>
-					<?php foreach($data['columns'] as $column) { ?>
+					<?php foreach(array_keys($data['columns']) as $column) { ?>
 						<th><?=\ATP\Inflector::titleize($column)?></th>
 					<?php } ?>
 				</tr>

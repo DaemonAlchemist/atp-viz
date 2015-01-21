@@ -1,20 +1,69 @@
 <script type="text/javascript">
 	google.load("visualization", "1", {packages: ["corechart"]});
-	google.setOnLoadCallback(drawChart);
-	function drawChart() {
-		var data = google.visualization.arrayToDataTable([
+	google.setOnLoadCallback(<?=$name?>DrawChart);
+	
+	var <?=$name?>Columns = [];
+    var <?=$name?>Series = {};
+	var <?=$name?>Data = null;
+	var <?=$name?>Chart = null;
+	var <?=$name?>Options = null;
+
+	function <?=$name?>DrawChart() {
+		<?=$name?>Data = google.visualization.arrayToDataTable([
 			[<?=\ATP\MapReduce::wrapJoin($data['columns'], ",", "'")?>]
 			<?php foreach($data['data'] as $x => $vals) { ?>
 				,['<?=$x?>', <?=\ATP\MapReduce::wrapJoin($vals, ",")?>]
 			<?php } ?>
 		]);
 		
-		var options = <?=$chartOptions?>;
+		<?=$name?>Options = <?=$chartOptions?>;
+		<?=$name?>Options.series = <?=$name?>Series;
 		
-		var chart = new google.visualization.ColumnChart(document.getElementById('<?=$cssId?>'));
-		chart.draw(data, options);
+		<?=$name?>Chart = new google.visualization.ColumnChart(document.getElementById('<?=$cssId?>'));
+		<?=$name?>Chart.draw(<?=$name?>Data, <?=$name?>Options);
+		
+		for (var i = 0; i < <?=$name?>Data.getNumberOfColumns(); i++) {
+			<?=$name?>Columns.push(i);
+			if (i > 0) {
+				<?=$name?>Series[i - 1] = {};
+			}
+		}
+		
+		google.visualization.events.addListener(<?=$name?>Chart, 'select', function () {
+			var sel = <?=$name?>Chart.getSelection();
+			// if selection length is 0, we deselected an element
+			if (sel.length > 0) {
+				// if row is undefined, we clicked on the legend
+				if (sel[0].row === null) {
+					var col = sel[0].column;
+					if (<?=$name?>Columns[col] == col) {
+						// hide the data series
+						<?=$name?>Columns[col] = {
+							label: <?=$name?>Data.getColumnLabel(col),
+							type: <?=$name?>Data.getColumnType(col),
+							calc: function () {
+								return null;
+							}
+						};
+						
+						// grey out the legend entry
+						<?=$name?>Series[col - 1].color = '#CCCCCC';
+					}
+					else {
+						// show the data series
+						<?=$name?>Columns[col] = col;
+						<?=$name?>Series[col - 1].color = null;
+					}
+					var view = new google.visualization.DataView(<?=$name?>Data);
+					view.setColumns(<?=$name?>Columns);
+					<?=$name?>Chart.draw(view, <?=$name?>Options);
+				}
+			}
+		});
 	};
-</script>
+	
+      
+ </script>
 <div id="<?=$name?>" class="widget ui-widget ui-corner-all border-box">
 	<h2 class="ui-widget-header ui-corner-all"><?=$label?></h2>
 	<div class="ui-widget-content">

@@ -1,6 +1,11 @@
+<script>
+	var <?=$name?>Table = null;
+	var <?=$name?>Data = null;
+</script>
+
 <?php if($this->updateUrl) { ?>
 	<script>
-		var <?=$name?>Data = <?=json_encode(array_intersect_key((array)$this->vars(), array_flip($this->queryVars)))?>;
+		var <?=$name?>UpdateData = <?=json_encode(array_intersect_key((array)$this->vars(), array_flip($this->queryVars)))?>;
 		var <?=$name?>UpdateUrl = "<?=$this->updateUrl?>";
 		var <?=$name?>UpdateFrequency = <?=$this->updateFrequency?>;
 		
@@ -8,34 +13,28 @@
 			$.ajax({
 				url: "<?=$this->basePath()?><?=$this->updateUrl?>",
 				type: 'GET',
-				data: <?=$name?>Data,
+				data: <?=$name?>UpdateData,
 				dataType: "json",
 				error: function(jqXHR, textStatus, errorThrown ){
 					//alert(textStatus + ": " + errorThrown);
 				},
 				success: function(data, textStatus, jqXHR) {
-					var table = $("table#<?=$cssId?>");
-					var header = table.find("thead tr");
-					var body = table.find("tbody");
-					
-					header.find("th").remove();
-					body.find("tr").remove();
-					
+					var newData = [];
+					var columns = [];
 					for(column in data.columns) {
-						header.append("<th>" + column + "</th>");
-					};
-					
-					data.data.forEach(function(row){
-						var html = "<tr>";						
-						for(column in row){
-							html += "<td class=\"" + column + "\">";
-							html += row[column];
-							html += "</td>";
-						}						
-						html += "</tr>";
-						
-						body.append(html);
+						columns.push(column);
+					}
+					newData.push(columns);
+					data.data.forEach(function(rowData, index) {
+						var row = [];
+						for(column in rowData) {
+							row.push(rowData[column]);
+						}
+						newData.push(row);
 					});
+					
+					<?=$name?>Data = google.visualization.arrayToDataTable(newData);
+					<?=$name?>Table.draw(<?=$name?>Data);
 				}
 			});
 		};
@@ -43,26 +42,40 @@
 	</script>
 <?php } ?>
 
+<script>
+	google.load("visualization", "1", {packages: ["table", "corechart"]});
+	google.setOnLoadCallback(<?=$name?>DrawTable);
+	
+	function <?=$name?>DrawTable() {
+		<?=$name?>Data = google.visualization.arrayToDataTable([
+			[<?=\ATP\MapReduce::wrapJoin(array_keys($data['columns']), ",", "'")?>]
+			<?php foreach($data['data'] as $x => $vals) { ?>
+				,[<?=\ATP\MapReduce::escapeJoin($vals, ",", "'", array("\n" => "<br/>"))?>]
+			<?php } ?>
+		]);
+		
+		<?php if(isset($colorFormats)) { ?>
+			<?php foreach($colorFormats as $index => $ranges) { ?>
+				var formatter = new google.visualization.ColorFormat();
+				<?php foreach($ranges as $range) { ?>
+					<?php if(is_numeric($range[0])) { ?>
+						formatter.addRange(<?=$range[0]?>, <?=$range[1]?>, '<?=$range[2]?>', '<?=$range[3]?>');
+					<?php } else { ?>
+							formatter.addRange('<?=$range[0]?>', '<?=$range[1]?>', '<?=$range[2]?>', '<?=$range[3]?>');
+					<?php } ?>
+				<?php } ?>
+				formatter.format(<?=$name?>Data, <?=$index?>);
+			<?php } ?>
+		<?php } ?>
+		
+		<?=$name?>Table = new google.visualization.Table(document.getElementById('<?=$cssId?>-Table'));
+		<?=$name?>Table.draw(<?=$name?>Data);
+	}
+</script>
+
 <div id="<?=$name?>" class="widget ui-widget ui-corner-all border-box">
 	<h2 class="ui-widget-header ui-corner-all"><?=$label?></h2>
 	<div class="ui-widget-content">
-		<table id="<?=$cssId?>" class="data-table">
-			<thead>
-				<tr>
-					<?php foreach(array_keys($data['columns']) as $column) { ?>
-						<th><?=\ATP\Inflector::titleize($column)?></th>
-					<?php } ?>
-				</tr>
-			</thead>
-			<tbody>
-				<?php foreach($data['data'] as $row) { ?>
-					<tr class="<?=$this->widget->getClasses($row)?>">
-						<?php foreach($row as $column => $value) { ?>
-							<td class="<?=$column?>"><?=$value?></td>
-						<?php } ?>
-					</tr>
-				<?php } ?>
-			</tbody>
-		</table>
+		<div id="<?=$cssId?>-Table"></div>
 	</div>
 </div>

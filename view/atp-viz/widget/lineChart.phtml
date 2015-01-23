@@ -29,9 +29,15 @@
 	};
 
 	<?php if($this->updateUrl) { ?>
-		var <?=$name?>Data = <?=json_encode(array_intersect_key((array)$this->vars(), array_flip($this->queryVars)))?>;
+		<?php if(isset($this->queryVars)) { ?>
+			var <?=$name?>Data = <?=json_encode(array_intersect_key((array)$this->vars(), array_flip($this->queryVars)))?>;
+		<?php } else { ?>
+			var <?=$name?>Data = {};
+		<?php } ?>
 		var <?=$name?>UpdateUrl = "<?=$this->updateUrl?>";
-		var <?=$name?>UpdateFrequency = <?=$this->updateFrequency?>;
+		<?php if($this->updateFrequency > 0) { ?>
+			var <?=$name?>UpdateFrequency = <?=$this->updateFrequency?>;
+		<?php } ?>
 		
 		var <?=$name?>Updater = function(){
 			$.ajax({
@@ -43,22 +49,43 @@
 					//alert(textStatus + ": " + errorThrown);
 				},
 				success: function(data, textStatus, jqXHR) {
+					if(typeof data === 'object') {
+						var newData = [];
+						for(index in data.data) {
+							var row = [];
+							row.push(index);
+							row = row.concat(data.data[index]);
+							newData.push(row);
+						}
+						data = newData;
+					}
+					
 					data.forEach(function(row, index){
-						<?php foreach(array_values($data['columns']) as $index => $type) { ?>
+						<?php $index = 0; ?>
+						<?php foreach(array_values($data['columns']) as $type) { ?>
 							<?php if(strpos($type, 'date') !== false) { ?>
+								if(data[index][<?=$index?>].indexOf("T") == -1) data[index][<?=$index?>] = data[index][<?=$index?>].replace(" ", "T");
 								data[index][<?=$index?>] = new Date(data[index][<?=$index?>] + "<?=$timeZoneOffset?>");
 							<?php } ?>
+							<?php $index++; ?>
 						<?php } ?>
 					});
+					
 					<?php if($updateRowMode == 'replace') { ?><?=$name?>ChartData.removeRows(0,999999999999);<?php } ?>
 					<?=$name?>ChartData.addRows(data);
-					<?=$name?>ChartOptions.hAxis.viewWindow.min = <?=$hAxisMinUpdate?>;
-					<?=$name?>ChartOptions.hAxis.viewWindow.max = <?=$hAxisMaxUpdate?>;
+					<?php if(isset($hAxisMinUpdate)) { ?>
+						<?=$name?>ChartOptions.hAxis.viewWindow.min = <?=$hAxisMinUpdate?>;
+					<?php } ?>
+					<?php if(isset($hAxisMaxUpdate)) { ?>
+						<?=$name?>ChartOptions.hAxis.viewWindow.max = <?=$hAxisMaxUpdate?>;
+					<?php } ?>
 					<?=$name?>Chart.draw(<?=$name?>ChartData, <?=$name?>ChartOptions);
 				}
 			});
 		};
-		setInterval(<?=$name?>Updater, <?=$name?>UpdateFrequency * 1000);
+		<?php if($this->updateFrequency > 0) { ?>
+			setInterval(<?=$name?>Updater, <?=$name?>UpdateFrequency * 1000);
+		<?php } ?>
 		//<?=$name?>Updater();
 	<?php } ?>
 </script>
@@ -66,6 +93,12 @@
 <div id="<?=$name?>" class="widget ui-widget ui-corner-all border-box">
 	<h2 class="ui-widget-header ui-corner-all"><?=$label?></h2>
 	<div class="ui-widget-content">
+		<?php if(isset($widgetHeader)) { ?>
+			<?=$widgetHeader?>
+		<?php } ?>
 		<div id="<?=$cssId?>" class="chart"></div>
+		<?php if(isset($widgetFooter)) { ?>
+			<?=$widgetFooter?>
+		<?php } ?>
 	</div>
 </div>

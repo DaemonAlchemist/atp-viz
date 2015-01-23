@@ -65,8 +65,10 @@ class Container extends \Zend\View\Model\ViewModel
 			
 			//Set the widget data source
 			$dataSource = $this->getServiceLocator()->get('DataSourceFactory')->getInstance($widgetInfo['dataSource']);
-			if(!is_null($dataSource)) $dataSource->setData($data);
+			if(!is_null($dataSource)) $dataSource->setData(array_merge($data, $widgetInfo['options']));
 			$widget->setDataSource($dataSource);
+			
+			$widget->init();
 		}
 		else
 		{
